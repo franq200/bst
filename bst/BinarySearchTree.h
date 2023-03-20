@@ -1,5 +1,6 @@
 #pragma once
 #include <exception>
+#include <iostream>
 
 template <typename T>
 struct Node
@@ -16,8 +17,13 @@ public:
 	void Insert(T value);
 	const T& Search(T value);
 	void Remove(T value);
+	void PrintAll() const;
 	size_t GetSize() const;
 private:
+	int CountDepth(Node<T>* startNode) const;
+	void CopyAllNodes(Node<T>* currentNode);
+	Node<T>* SearchNode(T value);
+	void Print(Node<T>* node) const;
 	size_t m_size;
 	Node<T>* m_root = nullptr;
 };
@@ -27,7 +33,7 @@ inline void BinarySearchTree<T>::Insert(T value)
 {
 	if (m_root == nullptr)
 	{
-		m_root = new Node<T>{value};
+		m_root = new Node<T>{ value };
 	}
 	else
 	{
@@ -87,10 +93,105 @@ inline const T& BinarySearchTree<T>::Search(T value)
 template<typename T>
 inline void BinarySearchTree<T>::Remove(T value)
 {
+	if (m_root == nullptr)
+	{
+		throw std::exception("zbiór jest pusty");
+	}
+	Node<T>* nodeToRemove = SearchNode(value); // 0x1234
+	auto leftDepth = CountDepth(nodeToRemove->left);
+	auto rightDepth = CountDepth(nodeToRemove->right);
+	Node<T>* originalRoot = nodeToRemove; // 0x1234
+	if (rightDepth >= leftDepth)
+	{
+		nodeToRemove = nodeToRemove->right; // 0x1235
+		CopyAllNodes(originalRoot->left);
+	}
+	else
+	{
+		nodeToRemove = nodeToRemove->left; //
+		CopyAllNodes(originalRoot->right);
+	}
+}
+
+template<typename T>
+inline void BinarySearchTree<T>::PrintAll() const
+{
+	Print(m_root);
 }
 
 template<typename T>
 inline size_t BinarySearchTree<T>::GetSize() const
 {
 	return m_size;
+}
+
+template<typename T>
+inline int BinarySearchTree<T>::CountDepth(Node<T>* startNode) const
+{
+	Node<T>* currentNode = startNode;
+	int depth = 0;
+	if (currentNode != nullptr)
+	{
+		depth++;
+		int left = CountDepth(currentNode->left);
+		int right = CountDepth(currentNode->right);
+		if (right >= left)
+		{
+			return depth + right;
+		}
+		else
+		{
+			return depth + left;
+		}
+	}
+	return depth;
+}
+
+template<typename T>
+inline void BinarySearchTree<T>::CopyAllNodes(Node<T>* currentNode)
+{
+	if (currentNode != nullptr)
+	{
+		Insert(currentNode->value);
+		CopyAllNodes(currentNode->left);
+		CopyAllNodes(currentNode->right);
+	}
+}
+
+template<typename T>
+inline Node<T>* BinarySearchTree<T>::SearchNode(T value)
+{
+	if (m_root == nullptr)
+	{
+		throw std::exception("zbiór jest pusty");
+	}
+
+	Node<T>* currentNode = m_root;
+	while (currentNode != nullptr)
+	{
+		if (value < currentNode->value)
+		{
+			currentNode = currentNode->left;
+		}
+		else if (value > currentNode->value)
+		{
+			currentNode = currentNode->right;
+		}
+		if (currentNode->value == value)
+		{
+			return currentNode;
+		}
+	}
+	throw std::exception("Nie ma takiego elementu");
+}
+
+template<typename T>
+inline void BinarySearchTree<T>::Print(Node<T>* node) const
+{
+	if (node != nullptr)
+	{
+		std::cout << node->value << ", ";
+		Print(node->left);
+		Print(node->right);
+	}
 }
