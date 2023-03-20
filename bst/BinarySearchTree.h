@@ -1,4 +1,5 @@
 #pragma once
+#include <exception>
 
 template <typename T>
 struct Node
@@ -59,7 +60,28 @@ inline void BinarySearchTree<T>::Insert(T value)
 template<typename T>
 inline const T& BinarySearchTree<T>::Search(T value)
 {
-	
+	if (m_root == nullptr)
+	{
+		throw std::exception("zbiór jest pusty");
+	}
+
+	Node<T>* currentNode = m_root;
+	while (currentNode != nullptr)
+	{
+		if (value < currentNode->value)
+		{
+			currentNode = currentNode->left;
+		}
+		else if (value > currentNode->value)
+		{
+			currentNode = currentNode->right;
+		}
+		if (currentNode->value == value)
+		{
+			return currentNode->value;
+		}
+	}
+	throw std::exception("Nie ma takiego elementu");
 }
 
 template<typename T>

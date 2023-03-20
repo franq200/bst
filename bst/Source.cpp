@@ -1,10 +1,12 @@
+#include "BinarySearchTree.h"
+#include <iostream>
+
 int main()
 {
-	return 0;
+	BinarySearchTree<int> bst;
+	bst.Insert(5);
+	bst.Insert(1);
+	bst.Insert(4);
+	bst.Insert(99);
+	std::cout << bst.Search(5);
 }
-
-/*
-	zad dom
-	-szablony cpp (powiedzieæ dlaczego w .h s¹ funkcje a nie w cpp)
-	- search
-*/
