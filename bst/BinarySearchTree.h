@@ -39,6 +39,7 @@ inline void BinarySearchTree<T>::Insert(T value)
 	{
 		Node<T>* currentNode = m_root;
 		Node<T>* beforeCurrentNode = nullptr;
+		std::cout << "Insert before while loop " << currentNode << '\n';
 		while (currentNode != nullptr)
 		{
 			beforeCurrentNode = currentNode;
@@ -51,6 +52,7 @@ inline void BinarySearchTree<T>::Insert(T value)
 				currentNode = currentNode->right;
 			}
 		}
+		std::cout << "Insert after while loop " << currentNode << '\n';
 
 		if (value < beforeCurrentNode->value)
 		{
@@ -100,16 +102,16 @@ inline void BinarySearchTree<T>::Remove(T value)
 	Node<T>* nodeToRemove = SearchNode(value); // 0x1234
 	auto leftDepth = CountDepth(nodeToRemove->left);
 	auto rightDepth = CountDepth(nodeToRemove->right);
-	Node<T>* originalRoot = nodeToRemove; // 0x1234
+	Node<T> originalRoot = *nodeToRemove; // 0x1234
 	if (rightDepth >= leftDepth)
 	{
-		nodeToRemove = nodeToRemove->right; // 0x1235
-		CopyAllNodes(originalRoot->left);
+		*nodeToRemove = *nodeToRemove->right; // 0x1235
+		CopyAllNodes(originalRoot.left);
 	}
 	else
 	{
-		nodeToRemove = nodeToRemove->left; //
-		CopyAllNodes(originalRoot->right);
+		*nodeToRemove = *nodeToRemove->left; //
+		CopyAllNodes(originalRoot.right);
 	}
 }
 
