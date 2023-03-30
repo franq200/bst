@@ -14,6 +14,8 @@ template <typename T>
 class BinarySearchTree
 {
 public:
+	~BinarySearchTree();
+	void DeleteNodes(Node<T>* currentNode);
 	void Insert(T value);
 	const T& Search(T value);
 	void Remove(T value);
@@ -27,6 +29,30 @@ private:
 	size_t m_size;
 	Node<T>* m_root = nullptr;
 };
+
+template<typename T>
+inline BinarySearchTree<T>::~BinarySearchTree()
+{
+	DeleteNodes(m_root);
+}
+
+template<typename T>
+inline void BinarySearchTree<T>::DeleteNodes(Node<T>* currentNode)
+{
+	Node<T>* nodeToDelete = currentNode;
+	if (currentNode->right != nullptr)
+	{
+		currentNode = currentNode->right;
+		delete nodeToDelete;
+		DeleteNodes(currentNode);
+	}
+	if (currentNode->left != nullptr)
+	{
+		currentNode = currentNode->left;
+		delete nodeToDelete;
+		DeleteNodes(currentNode);
+	}
+}
 
 template<typename T>
 inline void BinarySearchTree<T>::Insert(T value)
