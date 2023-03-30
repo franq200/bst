@@ -5,6 +5,7 @@
 template <typename T>
 struct Node
 {
+	Node<T>& operator= (const Node<T>& right);
 	T value;
 	Node<T>* left = nullptr;
 	Node<T>* right = nullptr;
@@ -39,18 +40,16 @@ inline BinarySearchTree<T>::~BinarySearchTree()
 template<typename T>
 inline void BinarySearchTree<T>::DeleteNodes(Node<T>* currentNode)
 {
-	Node<T>* nodeToDelete = currentNode;
-	if (currentNode->right != nullptr)
+	Node<T>* leftNode = currentNode->left;
+	Node<T>* rightNode = currentNode->right;
+	delete currentNode;
+	if (rightNode != nullptr)
 	{
-		currentNode = currentNode->right;
-		delete nodeToDelete;
-		DeleteNodes(currentNode);
+		DeleteNodes(rightNode);
 	}
-	if (currentNode->left != nullptr)
+	if (leftNode != nullptr)
 	{
-		currentNode = currentNode->left;
-		delete nodeToDelete;
-		DeleteNodes(currentNode);
+		DeleteNodes(leftNode);
 	}
 }
 
@@ -133,11 +132,13 @@ inline void BinarySearchTree<T>::Remove(T value)
 	{
 		*nodeToRemove = *nodeToRemove->right; // 0x1235
 		CopyAllNodes(originalRoot.left);
+		DeleteNodes(originalRoot.left);
 	}
 	else
 	{
 		*nodeToRemove = *nodeToRemove->left; //
 		CopyAllNodes(originalRoot.right);
+		DeleteNodes(originalRoot.right);
 	}
 }
 
@@ -223,3 +224,15 @@ inline void BinarySearchTree<T>::Print(Node<T>* node) const
 		Print(node->right);
 	}
 }
+
+
+template<typename T>
+inline Node<T>& Node<T>::operator=(const Node<T>& right)
+{
+	this->left = right.left;
+	this->right = right.right;
+	this->value = right.value;
+	delete &right;
+	return *this;
+}
+

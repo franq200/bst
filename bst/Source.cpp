@@ -11,24 +11,25 @@ int main()
 	_CrtMemState sNew;
 	_CrtMemState sDiff;
 	_CrtMemCheckpoint(&sOld); //take a snapshot
+	{
+		BinarySearchTree<int> bst;
+		bst.Insert(90);
+		bst.Insert(80);
+		bst.Insert(70);
+		bst.Insert(85);
+		bst.Insert(65);
+		bst.Insert(75);
+		bst.Insert(83);
+		bst.Insert(87);
+		bst.Insert(100);
+		bst.Insert(99);
+		bst.Insert(110);
 
-	BinarySearchTree<int> bst;
-	bst.Insert(90);
-	bst.Insert(80);
-	bst.Insert(70);
-	bst.Insert(85);
-	bst.Insert(65);
-	bst.Insert(75);
-	bst.Insert(83);
-	bst.Insert(87);
-	bst.Insert(100);
-	bst.Insert(99);
-	bst.Insert(110);
-
-	bst.PrintAll();
-	bst.Remove(80);
-	std::cout << '\n';
-	bst.PrintAll();
+		bst.PrintAll();
+		bst.Remove(80);
+		std::cout << '\n';
+		bst.PrintAll();
+	}
 
 	_CrtMemCheckpoint(&sNew); //take a snapshot 
 	if (_CrtMemDifference(&sDiff, &sOld, &sNew)) // if there is a difference
