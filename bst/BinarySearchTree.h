@@ -15,7 +15,6 @@ template <typename T>
 class BinarySearchTree
 {
 public:
-	~BinarySearchTree();
 	void DeleteNodes(Node<T>* currentNode);
 	void Insert(T value);
 	const T& Search(T value);
@@ -26,16 +25,10 @@ private:
 	int CountDepth(Node<T>* startNode) const;
 	void CopyAllNodes(Node<T>* currentNode);
 	Node<T>* SearchNode(T value);
-	void Print(Node<T>* node) const;
+	void Print(std::unique_ptr<Node<T>> node) const;
 	size_t m_size;
-	Node<T>* m_root = nullptr;
+	std::unique_ptr<Node<T>> m_root = std::make_unique<Node<T>>(nullptr);
 };
-
-template<typename T>
-inline BinarySearchTree<T>::~BinarySearchTree()
-{
-	DeleteNodes(m_root);
-}
 
 template<typename T>
 inline void BinarySearchTree<T>::DeleteNodes(Node<T>* currentNode)
@@ -58,34 +51,34 @@ inline void BinarySearchTree<T>::Insert(T value)
 {
 	if (m_root == nullptr)
 	{
-		m_root = new Node<T>{ value };
+		m_root = std::make_unique<Node<T>>(value); ///////////////////////////////////////////////////////////////
 	}
 	else
 	{
-		Node<T>* currentNode = m_root;
-		Node<T>* beforeCurrentNode = nullptr;
+		std::unique_ptr<Node<T>> currentNode = m_root;
+		std::unique_ptr<Node<T>> beforeCurrentNode = std::make_unique<Node<T>>(nullptr);
 		std::cout << "Insert before while loop " << currentNode << '\n';
-		while (currentNode != nullptr)
+		while (currentNode != std::make_unique<Node<T>>(nullptr))
 		{
-			beforeCurrentNode = currentNode;
+			beforeCurrentNode = std::make_unique<Node<T>>(currentNode);
 			if (value < currentNode->value)
 			{
-				currentNode = currentNode->left;
+				currentNode = std::make_unique<Node<T>>(currentNode->left);
 			}
 			else if (value > currentNode->value)
 			{
-				currentNode = currentNode->right;
+				currentNode = std::make_unique<Node<T>>(currentNode->right);
 			}
 		}
 		std::cout << "Insert after while loop " << currentNode << '\n';
 
 		if (value < beforeCurrentNode->value)
 		{
-			beforeCurrentNode->left = new Node<T>{ value };
+			std::make_unique<Node<T>>(beforeCurrentNode->left) = std::make_unique<Node<T>>(value); ///////////////////////////////////////////////////////////////
 		}
 		else if (value > beforeCurrentNode->value)
 		{
-			beforeCurrentNode->right = new Node<T>{ value };
+			std::make_unique<Node<T>>(beforeCurrentNode->right) = std::make_unique<Node<T>>(value); ///////////////////////////////////////////////////////////////
 		}
 	}
 }
@@ -124,19 +117,19 @@ inline void BinarySearchTree<T>::Remove(T value)
 	{
 		throw std::exception("zbiór jest pusty");
 	}
-	Node<T>* nodeToRemove = SearchNode(value); // 0x1234
+	Node<T>* nodeToRemove = SearchNode(value);
 	auto leftDepth = CountDepth(nodeToRemove->left);
 	auto rightDepth = CountDepth(nodeToRemove->right);
-	Node<T> originalRoot = *nodeToRemove; // 0x1234
+	Node<T> originalRoot = *nodeToRemove;
 	if (rightDepth >= leftDepth)
 	{
-		*nodeToRemove = *nodeToRemove->right; // 0x1235
+		*nodeToRemove = *nodeToRemove->right;
 		CopyAllNodes(originalRoot.left);
 		DeleteNodes(originalRoot.left);
 	}
 	else
 	{
-		*nodeToRemove = *nodeToRemove->left; //
+		*nodeToRemove = *nodeToRemove->left;
 		CopyAllNodes(originalRoot.right);
 		DeleteNodes(originalRoot.right);
 	}
@@ -215,7 +208,7 @@ inline Node<T>* BinarySearchTree<T>::SearchNode(T value)
 }
 
 template<typename T>
-inline void BinarySearchTree<T>::Print(Node<T>* node) const
+inline void BinarySearchTree<T>::Print(std::unique_ptr<Node<T>> node) const
 {
 	if (node != nullptr)
 	{
@@ -225,14 +218,12 @@ inline void BinarySearchTree<T>::Print(Node<T>* node) const
 	}
 }
 
-
 template<typename T>
 inline Node<T>& Node<T>::operator=(const Node<T>& right)
 {
 	this->left = right.left;
 	this->right = right.right;
 	this->value = right.value;
-	delete &right;
+	delete& right;
 	return *this;
 }
-

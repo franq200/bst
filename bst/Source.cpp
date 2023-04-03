@@ -42,3 +42,6 @@ int main()
 		_CrtDumpMemoryLeaks();
 	}
 }
+/*
+zad dom przerobiæ ¿eby by³o bez "new" (mo¿e ten fajny make unique? i metoda get bo nie mo¿na mieæ jednego unptr w wielu miejscach) i usub¹æ destruktor i filmik
+*/
