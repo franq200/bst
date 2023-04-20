@@ -25,6 +25,12 @@ public:
 	void PrintAll() const;
 	size_t GetSize() const;
 private:
+	int Difference(Node<T>*);
+	Node<T>* Rr_rotat(Node<T>*);
+	Node<T>* Ll_rotat(Node<T>*);
+	Node<T>* Lr_rotat(Node<T>*);
+	Node<T>* Rl_rotat(Node<T>*);
+	Node<T>* Balance(Node<T>*);
 	int CountDepth(Node<T>* startNode) const;
 	void CopyAllNodes(Node<T>* currentNode);
 	Node<T>* SearchNode(T value);
@@ -32,6 +38,74 @@ private:
 	size_t m_size;
 	std::shared_ptr<Node<T>> m_root = nullptr;
 };
+
+template<typename T>
+inline int BinarySearchTree<T>::Difference(Node<T>*)
+{
+	int l_height = CountDepth(m_root.get()->left);
+	int r_height = CountDepth(m_root.get()->right);
+	int b_factor = l_height - r_height;
+	return b_factor;
+}
+
+template<typename T>
+inline Node<T>* BinarySearchTree<T>::Rr_rotat(Node<T>* parent)
+{
+	Node<T>* t;
+	t = parent->right;
+	parent->right = t->left;
+	t->left = parent;
+	return t;
+}
+
+template<typename T>
+inline Node<T>* BinarySearchTree<T>::Ll_rotat(Node<T>* parent)
+{
+	Node<T>* t;
+	t = parent->left;
+	parent->left = t->right;
+	t->right = parent;
+	return t;
+}
+
+template<typename T>
+inline Node<T>* BinarySearchTree<T>::Lr_rotat(Node<T>* parent)
+{
+	Node<T>* t;
+	t = parent->left;
+	parent->left = rr_rotat(t);
+	return ll_rotat(parent);
+}
+
+template<typename T>
+inline Node<T>* BinarySearchTree<T>::Rl_rotat(Node<T>* parent)
+{
+	Node<T>* t;
+	t = parent->right;
+	parent->right = ll_rotat(t);
+	return rr_rotat(parent);
+}
+
+template<typename T>
+inline Node<T>* BinarySearchTree<T>::Balance(Node<T>*)
+{
+	int bal_factor = difference(m_root.get());
+	if (bal_factor > 1)
+	{
+		if (difference(m_root.get()->left) > 0)
+			m_root.get() = ll_rotat(m_root.get());
+		else
+			m_root.get() = lr_rotat(m_root.get());
+	}
+	else if (bal_factor < -1)
+	{
+		if (difference(m_root.get()->right) > 0)
+			m_root.get() = rl_rotat(m_root.get());
+		else
+			m_root.get() = rr_rotat(m_root.get());
+	}
+	return m_root.get();
+}
 
 template<typename T>
 inline void BinarySearchTree<T>::Insert(T value)
@@ -105,8 +179,8 @@ inline void BinarySearchTree<T>::Remove(T value)
 		throw std::exception("zbiór jest pusty");
 	}
 	Node<T>* nodeToRemove = SearchNode(value);
-	auto leftDepth = CountDepth(nodeToRemove->left.get());
-	auto rightDepth = CountDepth(nodeToRemove->right.get());
+	auto leftDepth = CountDepth(nodeToRemove->left.get() + 1);
+	auto rightDepth = CountDepth(nodeToRemove->right.get() + 1);
 	Node<T> originalRoot = *nodeToRemove;
 	if (rightDepth >= leftDepth)
 	{
@@ -140,18 +214,18 @@ inline int BinarySearchTree<T>::CountDepth(Node<T>* startNode) const
 	if (currentNode != nullptr)
 	{
 		depth++;
-		int left = CountDepth(currentNode->left.get());
-		int right = CountDepth(currentNode->right.get());
+		int left = CountDepth(currentNode->left.get() + 1);
+		int right = CountDepth(currentNode->right.get() + 1);
 		if (right >= left)
 		{
-			return depth + right;
+			return depth + right - 1;
 		}
 		else
 		{
-			return depth + left;
+			return depth + left - 1;
 		}
 	}
-	return depth;
+	return depth - 1;
 }
 
 template<typename T>
