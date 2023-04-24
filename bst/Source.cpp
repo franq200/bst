@@ -13,17 +13,16 @@ int main()
 	_CrtMemCheckpoint(&sOld); //take a snapshot
 	{
 		BinarySearchTree<int> bst;
-		bst.Insert(90);
-		bst.Insert(80);
-		bst.Insert(70);
-		bst.Insert(85);
-		bst.Insert(65);
-		bst.Insert(75);
-		bst.Insert(83);
-		bst.Insert(87);
-		bst.Insert(100);
-		bst.Insert(99);
-		bst.Insert(110);
+		bst.Insert(10);
+		bst.Insert(9);
+		bst.Insert(8);
+		bst.Insert(7);
+		bst.Insert(6);
+		bst.Insert(5);
+		bst.Insert(4);
+		bst.Insert(3);
+		bst.Insert(2);
+		bst.Insert(1);
 
 		bst.PrintAll();
 		bst.Balance();
