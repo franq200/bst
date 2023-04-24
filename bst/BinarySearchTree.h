@@ -19,18 +19,19 @@ template <typename T>
 class BinarySearchTree
 {
 public:
+	void Balance();
 	void Insert(T value);
 	const T& Search(T value);
 	void Remove(T value);
 	void PrintAll() const;
 	size_t GetSize() const;
 private:
-	int Difference(Node<T>*);
-	Node<T>* RrRotate(Node<T>*);
-	Node<T>* LlRotate(Node<T>*);
-	Node<T>* LrRotate(Node<T>*);
-	Node<T>* RlRotate(Node<T>*);
-	Node<T>* Balance(Node<T>*);
+	std::shared_ptr<Node<T>> Balancing(std::shared_ptr<Node<T>>);
+	int Difference(std::shared_ptr<Node<T>>);
+	std::shared_ptr<Node<T>> RrRotate(std::shared_ptr<Node<T>>);
+	std::shared_ptr<Node<T>> LlRotate(std::shared_ptr<Node<T>>);
+	std::shared_ptr<Node<T>> LrRotate(std::shared_ptr<Node<T>>);
+	std::shared_ptr<Node<T>> RlRotate(std::shared_ptr<Node<T>>);
 	int CountDepth(Node<T>* startNode) const;
 	void CopyAllNodes(Node<T>* currentNode);
 	Node<T>* SearchNode(T value);
@@ -40,67 +41,73 @@ private:
 };
 
 template<typename T>
-inline int BinarySearchTree<T>::Difference(Node<T>* node)
+inline int BinarySearchTree<T>::Difference(std::shared_ptr<Node<T>> node)
 {
-	int l_height = CountDepth(node->left);
-	int r_height = CountDepth(node->right);
+	int l_height = CountDepth(node->left.get());
+	int r_height = CountDepth(node->right.get());
 	int b_factor = l_height - r_height;
 	return b_factor;
 }
 
 template<typename T>
-inline Node<T>* BinarySearchTree<T>::RrRotate(Node<T>* parent)
+inline std::shared_ptr<Node<T>> BinarySearchTree<T>::RrRotate(std::shared_ptr<Node<T>> parent)
 {
-	Node<T>* t = parent->right;
+	std::shared_ptr<Node<T>> t = parent->right;
 	parent->right = t->left;
 	t->left = parent;
 	return t;
 }
 
 template<typename T>
-inline Node<T>* BinarySearchTree<T>::LlRotate(Node<T>* parent)
+inline std::shared_ptr<Node<T>> BinarySearchTree<T>::LlRotate(std::shared_ptr<Node<T>> parent)
 {
-	Node<T>* t = parent->left;
+	std::shared_ptr<Node<T>> t = parent->left;
 	parent->left = t->right;
 	t->right = parent;
 	return t;
 }
 
 template<typename T>
-inline Node<T>* BinarySearchTree<T>::LrRotate(Node<T>* parent)
+inline std::shared_ptr<Node<T>> BinarySearchTree<T>::LrRotate(std::shared_ptr<Node<T>> parent)
 {
-	Node<T>* t = parent->left;
-	parent->left = rr_rotat(t);
-	return ll_rotat(parent);
+	std::shared_ptr<Node<T>> t = parent->left;
+	parent->left = RrRotate(t);
+	return LlRotate(parent);
 }
 
 template<typename T>
-inline Node<T>* BinarySearchTree<T>::RlRotate(Node<T>* parent)
+inline std::shared_ptr<Node<T>> BinarySearchTree<T>::RlRotate(std::shared_ptr<Node<T>> parent)
 {
-	Node<T>* t = parent->right;
-	parent->right = ll_rotat(t);
-	return rr_rotat(parent);
+	std::shared_ptr<Node<T>> t = parent->right;
+	parent->right = LlRotate(t);
+	return RrRotate(parent);
 }
 
 template<typename T>
-inline Node<T>* BinarySearchTree<T>::Balance(Node<T>* node)
+inline std::shared_ptr<Node<T>> BinarySearchTree<T>::Balancing(std::shared_ptr<Node<T>> node)
 {
-	int bal_factor = difference(node.get());
+	int bal_factor = Difference(node);
 	if (bal_factor > 1)
 	{
-		if (difference(node.get()->left) > 0)
-			node.get() = ll_rotat(node.get());
+		if (Difference(node->left) > 0)
+			node = LlRotate(node);
 		else
-			node.get() = lr_rotat(node.get());
+			node = LrRotate(node);
 	}
 	else if (bal_factor < -1)
 	{
-		if (difference(node.get()->right) > 0)
-			node.get() = rl_rotat(node.get());
+		if (Difference(node->right) > 0)
+			node = RlRotate(node);
 		else
-			node.get() = rr_rotat(node.get());
+			node = RrRotate(node);
 	}
-	return node.get();
+	return node;
+}
+
+template<typename T>
+inline void BinarySearchTree<T>::Balance()
+{
+	Balancing(m_root);
 }
 
 template<typename T>

@@ -26,8 +26,8 @@ int main()
 		bst.Insert(110);
 
 		bst.PrintAll();
-		bst.Remove(80);
-		std::cout << '\n';
+		bst.Balance();
+		std::cout << "\n";
 		bst.PrintAll();
 	}
 
@@ -42,6 +42,3 @@ int main()
 		_CrtDumpMemoryLeaks();
 	}
 }
-/*
-zad dom przerobiæ ¿eby by³o bez "new" (mo¿e ten fajny make unique? i metoda get bo nie mo¿na mieæ jednego unptr w wielu miejscach) i usub¹æ destruktor i filmik
-*/
