@@ -26,7 +26,7 @@ public:
 	void PrintAll() const;
 	size_t GetSize() const;
 private:
-	std::shared_ptr<Node<T>> Balancing(std::shared_ptr<Node<T>>);
+	std::shared_ptr<Node<T>> Balancing(std::shared_ptr<Node<T>>&);
 	int Difference(std::shared_ptr<Node<T>>);
 	std::shared_ptr<Node<T>> RrRotate(std::shared_ptr<Node<T>>);
 	std::shared_ptr<Node<T>> LlRotate(std::shared_ptr<Node<T>>);
@@ -84,22 +84,27 @@ inline std::shared_ptr<Node<T>> BinarySearchTree<T>::RlRotate(std::shared_ptr<No
 }
 
 template<typename T>
-inline std::shared_ptr<Node<T>> BinarySearchTree<T>::Balancing(std::shared_ptr<Node<T>> node)
+inline std::shared_ptr<Node<T>> BinarySearchTree<T>::Balancing(std::shared_ptr<Node<T>>& node)
 {
 	int bal_factor = Difference(node);
-	if (bal_factor > 1)
+	while (bal_factor > 1 || bal_factor < -1)
 	{
-		if (Difference(node->left) > 0)
-			node = LlRotate(node);
-		else
-			node = LrRotate(node);
-	}
-	else if (bal_factor < -1)
-	{
-		if (Difference(node->right) > 0)
-			node = RlRotate(node);
-		else
-			node = RrRotate(node);
+		if (bal_factor > 1)
+		{
+			if (Difference(node->left) > 0)
+				node = LlRotate(node);
+			else
+				node = LrRotate(node);
+		}
+		else if (bal_factor < -1)
+		{
+			if (Difference(node->right) > 0)
+				node = RlRotate(node);
+			else
+				node = RrRotate(node);
+		}
+
+		bal_factor = Difference(node);
 	}
 	return node;
 }
@@ -107,7 +112,7 @@ inline std::shared_ptr<Node<T>> BinarySearchTree<T>::Balancing(std::shared_ptr<N
 template<typename T>
 inline void BinarySearchTree<T>::Balance()
 {
-	Balancing(m_root);
+		Balancing(m_root);
 }
 
 template<typename T>
