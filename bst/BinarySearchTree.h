@@ -112,7 +112,17 @@ inline std::shared_ptr<Node<T>> BinarySearchTree<T>::Balancing(std::shared_ptr<N
 template<typename T>
 inline void BinarySearchTree<T>::Balance()
 {
-		Balancing(m_root);
+	Balancing(m_root);
+	std::shared_ptr<Node<T>> currentNode = m_root;
+	while (CountDepth(m_root.get()) / 2 <= CountDepth(currentNode.get()))
+	{
+		currentNode = Balancing(currentNode->left);
+	}
+	currentNode = m_root;
+	while (CountDepth(m_root.get()) / 2 <= CountDepth(currentNode.get()))
+	{
+		currentNode = Balancing(currentNode->right);
+	}
 }
 
 template<typename T>
